@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会计新人修炼记｜第3章 会计要素确认计量报告</title>
+    <style>
+        *{box-sizing:border-box;font-family:"Microsoft Yahei",sans-serif;margin:0;padding:0}
+        body{background:#f7f2f9;padding:20px;color:#333;line-height:1.6}
+        .container{max-width:700px;margin:0 auto;background:#fff;border-radius:18px;padding:24px;box-shadow:0 4px 16px #00000010}
+        .title{text-align:center;font-size:24px;color:#b56597;margin-bottom:12px}
+        .sub-title{text-align:center;color:#777;margin-bottom:24px}
+        .level-tag{display:inline-block;background:#fad7e4;color:#b54b74;padding:6px 14px;border-radius:99px;font-weight:bold;margin-bottom:16px}
+        .question{font-size:19px;margin-bottom:22px;font-weight:500}
+        .option{width:100%;padding:16px 20px;border:2px solid #eee;border-radius:12px;background:#fff;margin-bottom:14px;text-align:left;font-size:17px;cursor:pointer;transition:0.25s}
+        .option:hover{border-color:#e8b8cc;background:#fef4f8}
+        .option.correct{background:#dcf6e7;border-color:#40b878}
+        .option.wrong{background:#ffe9e9;border-color:#ed6868}
+        .explain{background:#f8f8f8;padding:16px;border-radius:10px;margin-top:16px;display:none}
+        .btn{padding:12px 24px;border:none;background:#b56597;color:white;border-radius:10px;font-size:17px;cursor:pointer;margin-top:10px}
+        .btn:disabled{background:#cccccc;cursor:not-allowed}
+        .result-page{text-align:center;padding:30px 0;display:none}
+        .reset-btn{background:#777}
+
+        /* 新增：登录、成绩、排行榜 */
+        .field{margin-bottom:14px}
+        .field label{display:block;font-weight:bold;margin-bottom:6px}
+        .field input,.tools select{width:100%;padding:12px 14px;border:2px solid #eee;border-radius:12px;font-size:17px;background:#fff;color:#333}
+        .field input:focus,.tools select:focus{outline:none;border-color:#b56597}
+        .btn.block{width:100%}
+        .btn.ghost{background:#fff;color:#b56597;border:2px solid #b56597}
+        .btn.sm{padding:8px 16px;font-size:15px}
+        .err{color:#d94848;min-height:22px;font-size:15px;margin-top:6px}
+        .score-tag{margin-left:8px;display:inline-block;background:#e9f7ef;color:#2f9a63;padding:6px 14px;border-radius:99px;font-weight:bold;margin-bottom:16px}
+        .stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+        .stat3 div{background:#fef4f8;border-radius:12px;padding:12px 4px}
+        .stat3 b{display:block;font-size:26px;color:#b56597}
+        .stat3 span{font-size:13px;color:#777}
+        .rankline{background:#fad7e4;color:#b54b74;border-radius:12px;padding:10px;font-weight:bold;margin-bottom:16px}
+        .warn{background:#fff3e0;color:#b25b00;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:15px;display:none;text-align:left}
+        .board-h{text-align:left;font-weight:bold;margin:18px 0 10px;color:#b56597;font-size:18px}
+        .rows{text-align:left}
+        .row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid #eee;border-radius:12px;margin-bottom:8px;background:#fff}
+        .row.me{border-color:#b56597;background:#fef4f8}
+        .row .rk{width:34px;text-align:center;font-weight:bold;font-size:18px;flex:none}
+        .row .nm{flex:1;min-width:0;line-height:1.3}
+        .row .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .row .nm span{font-size:13px;color:#888}
+        .row .sc{text-align:right;line-height:1.3}
+        .row .sc b{font-size:20px;color:#b56597}
+        .row .sc span{display:block;font-size:12px;color:#888}
+        .row .me-tag{font-size:12px;background:#b56597;color:#fff;border-radius:8px;padding:0 6px;margin-left:6px}
+        .empty{text-align:center;color:#999;padding:14px}
+        .note{margin-top:16px;font-size:12px;color:#999;text-align:center}
+        .topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .link{background:none;border:none;color:#b56597;font-size:15px;cursor:pointer;text-decoration:underline}
+        .tools{display:flex;gap:10px;margin-bottom:12px}
+        .tscroll{overflow-x:auto}
+        table{border-collapse:collapse;font-size:13px;white-space:nowrap;min-width:560px;width:100%}
+        th{background:#b56597;color:#fff;padding:8px 10px}
+        td{padding:8px 10px;border-bottom:1px solid #f0e6ec;text-align:center}
+        tr:nth-child(even) td{background:#fef8fb}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">会计新人修炼记</h1>
+        <div class="sub-title">第3章 政府与非营利组织会计要素的确认、计量与报告</div>
+
+        <!-- 开始页 -->
+        <div id="startBox">
+            <div class="field"><label for="inName">姓名</label><input id="inName" maxlength="10" autocomplete="off" placeholder="例如：张三"></div>
+            <div class="field"><label for="inCls">班级</label><input id="inCls" maxlength="12" autocomplete="off" placeholder="例如：会计2101"></div>
+            <button class="btn block" id="startBtn">开始闯关</button>
+            <div class="err" id="startErr"></div>
+            <button class="btn ghost block" id="viewBoardBtn">🏆 查看排行榜</button>
+        </div>
+
+        <!-- 答题页 -->
+        <div id="gameBox" style="display:none">
+            <div class="level-tag">第 <span id="levelNum">1</span> / <span id="levelTotal">5</span> 题</div><span class="score-tag">得分 <span id="scoreNow">0</span></span>
+            <div class="question" id="questionText"></div>
+            <div id="optionBox"></div>
+            <div class="explain" id="explainBox"></div>
+            <button class="btn" id="nextBtn" disabled>下一题</button>
+        </div>
+
+        <!-- 结果页 -->
+        <div class="result-page" id="resultBox">
+            <h2>🎉恭喜闯关成功！</h2>
+            <div class="stat3">
+                <div><b id="rScore">0</b><span>本次得分</span></div>
+                <div><b id="rCorrect">0</b><span>答对题数</span></div>
+                <div><b id="rTime">0</b><span>用时（秒）</span></div>
+            </div>
+            <div class="rankline" id="rankLine">正在上传成绩…</div>
+            <div class="warn" id="upErr"></div>
+            <p style="margin:12px 0;font-size:16px;">截图当前页面，提交作业</p>
+            <button class="btn reset-btn" id="retryBtn">重新闯关</button>
+            <button class="btn ghost" id="switchBtn">换人</button>
+            <div class="board-h">🏆 排行榜</div>
+            <div class="rows" id="resultBoard"><div class="empty">加载中…</div></div>
+        </div>
+
+        <!-- 排行榜页 -->
+        <div id="boardBox" style="display:none">
+            <div class="topline"><button class="link" id="boardBack">← 返回</button><button class="link" id="boardRefresh">刷新</button></div>
+            <div class="board-h" style="margin-top:0">🏆 排行榜</div>
+            <div class="rows" id="fullBoard"><div class="empty">加载中…</div></div>
+            <p class="note">按得分从高到低排序，同分用时短的排前面。点“刷新”查看最新排名。</p>
+        </div>
+
+        <!-- 教师页（网址后加 #teacher） -->
+        <div id="teacherBox" style="display:none"></div>
+    </div>
+
+<script>
+/* ============ 云端配置 ============ */
+const SUPABASE_URL = 'https://wouebzvfmicsbxckvdtw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvdWVienZmbWljc2J4Y2t2ZHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTQ5MTUsImV4cCI6MjEwNTM5MDkxNX0.GdX5j3GM1kK9tcbNxnA6NILPjaKHOn5Jqp7PJzldRYA';
+const TABLE = 'scores_gov3';          // 第3章专用的数据表
+const TEACHER_PWD = 'teacher2026';    // 教师看板密码，可自行修改
+
+// 题库，第3章题目，第3题已经修正答案
+const questionList = [
+    {
+        q:"政府会计要素分为预算会计要素和财务会计要素两大类，这句话是否正确？",
+        options:["正确","错误"],
+        answer:0,
+        explain:"✅解析：政府会计包含双体系，预算会计要素：预算收入、预算支出、预算结余；财务会计要素：资产、负债、净资产、收入、费用。"
+    },
+    {
+        q:"政府财务会计中，资产的计量属性不包括下面哪一项？",
+        options:["历史成本","重置成本","公允价值","计划成本"],
+        answer:3,
+        explain:"✅解析：资产计量属性包含历史成本、重置成本、现值、公允价值、名义金额，无计划成本。"
+    },
+    {
+        q:"图书馆收到市民捐赠旧图书，可正常借阅但无发票无市场价、价值无法可靠计量。能否确认为资产？",
+        options:["A 能","B 不能"],
+        answer:0,
+        explain:"✅解析：能，接受捐赠资产无凭据、无市场价格时，可以按名义金额（1元）入账确认资产。"
+    },
+    {
+        q:"政府单位的费用，是指报告期内导致政府会计主体净资产减少的、含有服务潜力或者经济利益的经济资源的流出。",
+        options:["对","错"],
+        answer:0,
+        explain:"✅解析：政府会计费用定义，该表述完全正确。"
+    },
+    {
+        q:"预算收入以收付实现制为基础确认，一般在实际收到款项时确认。",
+        options:["正确","错误"],
+        answer:0,
+        explain:"✅解析：预算会计采用收付实现制，预算收入在实际收到款项时确认。"
+    }
+];
+const POINTS = 100 / questionList.length;   // 每题分值（5题=每题20分，满分100）
+
+/* ============ 工具 ============ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const BOXES = ['startBox','gameBox','resultBox','boardBox','teacherBox'];
+let lastBox = 'startBox';
+function show(id){ BOXES.forEach(b=>$(b).style.display = b===id ? 'block' : 'none'); }
+
+function sb(path,opt={}){
+    const c=new AbortController(); const t=setTimeout(()=>c.abort(),9000);
+    return fetch(SUPABASE_URL+'/rest/v1/'+path,{...opt,signal:c.signal,
+        headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',...(opt.headers||{})}
+    }).finally(()=>clearTimeout(t));
+}
+async function fetchList(){
+    const r = await sb(TABLE+'?select=*&order=score.desc,time.asc&limit=300');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+}
+
+/* ============ 游戏状态 ============ */
+let state = {name:'',cls:'',level:0,score:0,correct:0,time:0,detail:[]};
+let selected = null, qStart = 0, pending = null;
+const saveKey = "govAccountChapter3";
+
+function persist(){ try{ localStorage.setItem(saveKey, JSON.stringify(state)); }catch(e){} }
+function restore(){
+    try{ const d = JSON.parse(localStorage.getItem(saveKey)||'null'); if(d && d.name) state = Object.assign(state,d); }catch(e){}
+}
+function isMe(r){ return r.name===state.name && r.class_name===state.cls; }
+
+/* ============ 开始 ============ */
+function startGame(){
+    const name = $('inName').value.trim(), cls = $('inCls').value.trim();
+    if(!name || !cls){ $('startErr').textContent='请先填写姓名和班级'; return; }
+    $('startErr').textContent='';
+    const resume = state.name===name && state.cls===cls && state.level>0 && state.level<questionList.length;
+    if(!resume) state = {name,cls,level:0,score:0,correct:0,time:0,detail:[]};
+    persist();
+    show('gameBox');
+    renderQuestion();
+}
+
+//渲染题目
+function renderQuestion(){
+    selected = null; pending = null; qStart = Date.now();
+    const q = questionList[state.level];
+    $("levelNum").innerText = state.level+1;
+    $("levelTotal").innerText = questionList.length;
+    $("scoreNow").innerText = Math.round(state.score);
+    $("questionText").innerText = q.q;
+    const optBox = $("optionBox");
+    optBox.innerHTML = "";
+    q.options.forEach((opt,idx)=>{
+        let btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerText = opt;
+        btn.onclick = ()=>selectOption(idx);
+        optBox.appendChild(btn);
+    });
+    $("explainBox").style.display="none";
+    $("nextBtn").innerText = state.level===questionList.length-1 ? "查看结果" : "下一题";
+    $("nextBtn").disabled = true;
+}
+
+//选择答案
+function selectOption(idx){
+    if(selected!==null) return;
+    selected = idx;
+    const q = questionList[state.level];
+    const ok = idx===q.answer;
+    pending = {ok, dt:Math.min(90,(Date.now()-qStart)/1000)};
+    $("explainBox").innerText = (ok?"🎉答对了！ ":"答错了，正确答案已标出。 ") + q.explain;
+    $("explainBox").style.display="block";
+    document.querySelectorAll(".option").forEach((el,i)=>{
+        if(i === q.answer){
+            el.classList.add("correct");
+        }else if(i===idx && idx!==q.answer){
+            el.classList.add("wrong");
+        }
+        el.disabled = true;
+    });
+    $("nextBtn").disabled=false;
+}
+
+//下一题
+$("nextBtn").onclick = function(){
+    if(!pending) return;
+    state.score += pending.ok ? POINTS : 0;
+    state.correct += pending.ok ? 1 : 0;
+    state.time += pending.dt;
+    state.detail.push(pending.ok ? 1 : 0);
+    state.level++;
+    pending = null;
+    persist();
+    if(state.level >= questionList.length) finish(); else renderQuestion();
+};
+
+/* ============ 结算与上传 ============ */
+async function submitScore(){
+    const id = (state.name+'_'+state.cls).replace(/[\s\/\\'"]/g,'');
+    const now = {score:Math.round(state.score),correct:state.correct,time:Math.round(state.time),detail:state.detail};
+    const g = await sb(TABLE+'?select=*&id=eq.'+encodeURIComponent(id));
+    if(!g.ok) throw new Error('HTTP '+g.status);
+    const ex = (await g.json())[0] || null;
+    let best = now, attempts = 1, first = now.score;
+    if(ex){
+        attempts = (ex.attempts||1)+1;
+        first = ex.first_score!=null ? ex.first_score : ex.score;
+        if(ex.score>now.score || (ex.score===now.score && ex.time<=now.time))
+            best = {score:ex.score,correct:ex.correct,time:ex.time,detail:ex.detail};
+    }
+    const row = {id,name:state.name,class_name:state.cls,score:best.score,correct:best.correct,time:best.time,
+        detail:best.detail,first_score:first,attempts,updated_at:new Date().toISOString()};
+    const r = await sb(TABLE+'?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+}
+function rowHtml(r,i){
+    const medal=['🥇','🥈','🥉'][i];
+    return `<div class="row ${isMe(r)?'me':''}"><div class="rk">${medal||i+1}</div>
+        <div class="nm"><b>${esc(r.name)}${isMe(r)?'<i class="me-tag" style="font-style:normal">我</i>':''}</b><span>${esc(r.class_name)}</span></div>
+        <div class="sc"><b>${r.score}</b><span>${r.correct}/${questionList.length}题 · ${r.time}秒</span></div></div>`;
+}
+async function loadBoard(boxId,rankId,limit){
+    const box = $(boxId);
+    try{
+        const list = await fetchList();
+        box.innerHTML = list.length ? list.slice(0,limit||100).map(rowHtml).join('') : '<div class="empty">还没有人上榜，来当第一名吧！</div>';
+        if(rankId){
+            const i = list.findIndex(isMe);
+            $(rankId).textContent = i>=0 ? `你目前排第 ${i+1} 名（共 ${list.length} 人，最好成绩 ${list[i].score} 分）` : '成绩暂未显示，请稍后刷新';
+        }
+    }catch(e){
+        box.innerHTML = '<div class="empty">⚠️ 排行榜加载失败，请检查网络后重试（'+esc(e.message||e)+'）</div>';
+        if(rankId) $(rankId).textContent = '排行榜暂时无法加载';
+    }
+}
+async function uploadAndShow(){
+    $('rankLine').textContent = '正在上传成绩…';
+    $('upErr').style.display='none';
+    try{ await submitScore(); }
+    catch(e){
+        $('upErr').style.display='block';
+        $('upErr').innerHTML = '⚠️ 成绩上传失败，请检查网络后点 <button class="btn sm" onclick="uploadAndShow()" style="margin:0 0 0 6px">重新上传</button>';
+    }
+    await loadBoard('resultBoard','rankLine',20);
+}
+function finish(){
+    show('resultBox');
+    $('rScore').textContent = Math.round(state.score);
+    $('rCorrect').textContent = state.correct+'/'+questionList.length;
+    $('rTime').textContent = Math.round(state.time);
+    uploadAndShow();
+}
+
+//重新闯关（同一个人）
+$('retryBtn').onclick = function(){
+    state = {name:state.name,cls:state.cls,level:0,score:0,correct:0,time:0,detail:[]};
+    persist(); show('gameBox'); renderQuestion();
+};
+$('switchBtn').onclick = function(){
+    try{ localStorage.removeItem(saveKey); }catch(e){}
+    state = {name:'',cls:'',level:0,score:0,correct:0,time:0,detail:[]};
+    $('inName').value=''; $('inCls').value=''; show('startBox');
+};
+$('startBtn').onclick = startGame;
+$('viewBoardBtn').onclick = function(){ lastBox='startBox'; show('boardBox'); loadBoard('fullBoard'); };
+$('boardBack').onclick = function(){ show(lastBox); };
+$('boardRefresh').onclick = function(){ $('fullBoard').innerHTML='<div class="empty">加载中…</div>'; loadBoard('fullBoard'); };
+document.addEventListener('keydown',e=>{
+    if(e.key==='Enter' && $('startBox').style.display!=='none' && e.target.tagName==='INPUT') startGame();
+    if(e.key==='Enter' && e.target.id==='tPwd') teacherLogin();
+});
+
+/* ============ 教师看板（网址后加 #teacher） ============ */
+let TL = {list:[],cls:''};
+function teacherGate(msg){
+    show('teacherBox');
+    $('teacherBox').innerHTML = `<div class="field"><label for="tPwd">教师密码</label><input id="tPwd" type="password" autocomplete="off"></div>
+        <button class="btn block" onclick="teacherLogin()">进入教师看板</button><div class="err">${msg||''}</div>
+        <button class="link" onclick="location.hash='';location.reload()">返回游戏</button>`;
+}
+function teacherLogin(){ if($('tPwd').value===TEACHER_PWD) teacherLoad(); else teacherGate('密码不对'); }
+async function teacherLoad(){
+    $('teacherBox').innerHTML = '<div class="empty">加载中…</div>';
+    try{ TL.list = await fetchList(); teacherDraw(); }
+    catch(e){ $('teacherBox').innerHTML = '<div class="empty">⚠️ 加载失败：'+esc(e.message||e)+'</div>'; }
+}
+function tRows(){ return TL.list.filter(r=>!TL.cls || r.class_name===TL.cls); }
+function fmt(x){ if(!x) return ''; const d=new Date(x); return isNaN(d)?x:d.toLocaleString('zh-CN',{hour12:false}); }
+function teacherDraw(){
+    const classes=[...new Set(TL.list.map(r=>r.class_name))].sort();
+    const rows=tRows();
+    const avg = rows.length ? Math.round(rows.reduce((a,r)=>a+r.score,0)/rows.length) : 0;
+    const qs = questionList.map((q,i)=>`<th>第${i+1}题</th>`).join('');
+    const mark = (d,i)=> d && d[i]!=null ? (d[i]?'✓':'✗') : '-';
+    $('teacherBox').innerHTML = `<div class="topline"><b style="color:#b56597;font-size:18px">教师看板</b><button class="link" onclick="teacherLoad()">刷新</button></div>
+        <div class="tools"><select id="tCls"><option value="">全部班级</option>${classes.map(c=>`<option value="${esc(c)}" ${c===TL.cls?'selected':''}>${esc(c)}</option>`).join('')}</select>
+        <button class="btn sm" style="margin:0;white-space:nowrap" onclick="downloadCsv()">下载 CSV</button></div>
+        <p style="margin-bottom:10px;font-weight:bold">共 ${rows.length} 人，平均 ${avg} 分</p>
+        <div class="tscroll"><table><tr><th>排名</th><th>姓名</th><th>班级</th><th>最高分</th><th>首次得分</th><th>次数</th><th>用时</th>${qs}<th>更新时间</th></tr>
+        ${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.class_name)}</td><td><b>${r.score}</b></td><td>${r.first_score!=null?r.first_score:'-'}</td><td>${r.attempts||1}</td><td>${r.time}秒</td>${questionList.map((q,k)=>`<td>${mark(r.detail,k)}</td>`).join('')}<td>${esc(fmt(r.updated_at))}</td></tr>`).join('')}
+        </table></div>${rows.length?'':'<div class="empty">还没有学生成绩</div>'}
+        <p class="note">“第N题”一列显示该学生最高分那次的作答：✓答对，✗答错。</p>
+        <button class="link" onclick="location.hash='';location.reload()">返回游戏</button>`;
+}
+document.addEventListener('change',e=>{ if(e.target.id==='tCls'){ TL.cls=e.target.value; teacherDraw(); } });
+function downloadCsv(){
+    const safe=v=>{ v=String(v==null?'':v); if(/^[=+\-@]/.test(v)) v="'"+v; return '"'+v.replace(/"/g,'""')+'"'; };
+    const head=['排名','姓名','班级','最高分','首次得分','闯关次数','用时(秒)',...questionList.map((q,i)=>`第${i+1}题`),'更新时间'];
+    const lines=[head,...tRows().map((r,i)=>[i+1,r.name,r.class_name,r.score,r.first_score,r.attempts||1,r.time,
+        ...questionList.map((q,k)=>r.detail&&r.detail[k]!=null?(r.detail[k]?'对':'错'):''),fmt(r.updated_at)])];
+    const csv='\ufeff'+lines.map(r=>r.map(safe).join(',')).join('\r\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download='第3章闯关成绩.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ============ 启动 ============ */
+window.onload = function(){
+    restore();
+    $('inName').value = state.name || ''; $('inCls').value = state.cls || '';
+    const inProgress = state.name && state.level>0 && state.level<questionList.length;
+    if(inProgress) $('startBtn').innerText = '继续闯关（第 '+(state.level+1)+' 题）';
+    if(location.hash==='#teacher') teacherGate(); else show('startBox');
+};
+window.addEventListener('hashchange',()=>{ if(location.hash==='#teacher') teacherGate(); });
+</script>
+</body>
+</html>
